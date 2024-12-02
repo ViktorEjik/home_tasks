@@ -3,34 +3,36 @@
 //
 #include <exception>
 #include <string>
+#include <sstream>
 #include <iostream>
 
 class TMyException: std::exception{
 public:
-    TMyException operator<<(std::basic_string<char> alert){
-        alert__ = alert;
+    TMyException& operator<<(const std::string& alert){
+        alert_ += alert;
         return *this;
     }
 
-    const char * what() const noexcept override{
-        return alert__.c_str();
+    [[nodiscard]] const char * what() const noexcept override{
+        return alert_.c_str();
     }
 protected:
-    std::basic_string<char> alert__;
+    std::string alert_;
 };
 
 class MyExcept1: public TMyException{
 public:
-    MyExcept1 operator<<(std::basic_string<char> alert){
-        alert__ = alert + " alert1";
+
+    MyExcept1& operator<<(const std::string& alert){
+        alert_ += alert + " alert1";
         return *this;
     }
 };
 
 class MyExcept2: public TMyException{
 public:
-    MyExcept2 operator<<(std::basic_string<char> alert){
-        alert__ = alert + " alert2 what";
+    MyExcept2& operator<<(const std::string& alert){
+        alert_ += alert + " alert2 what";
         return *this;
     }
 };
@@ -44,7 +46,7 @@ int main(){
     }
 
     try {
-        throw TMyException() << "ALARM";
+        throw TMyException() << "ALARM" << " l";
     }
     catch (TMyException &e){
         std::cout <<  "what: " << e.what() << '\n';
