@@ -1,30 +1,29 @@
 #include <iostream>
 #include <map>
 #include <chrono>
+#include <ctime>
 
 int main() {
-    std::map<uint64_t, uint64_t> myMap;
-    auto it = myMap.begin();
-    std::chrono::duration<double, std::milli> time{};
-    std::chrono::duration<double, std::milli> time_hint{};
+    std::map<uint64_t, uint64_t> myMap1;
+    std::map<uint64_t, uint64_t> myMap2;
+    auto it = myMap1.begin();
     // Заполняем map последовательно
+    auto start = clock();
     for (uint64_t i = 0; i < 10000000; ++i) {
-        auto start = std::chrono::high_resolution_clock::now();
-        it = myMap.insert(it, {i, i});
-        auto end = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double, std::milli> elapsed = end - start;
-        time_hint += elapsed;
 
-        // Для сравнения, вставка без hint
-        start = std::chrono::high_resolution_clock::now();
-        myMap.insert({i + 1, i + 1});
-        end = std::chrono::high_resolution_clock::now();
-        elapsed = end - start;
-        time += elapsed;
+        myMap2.insert({i, i});
     }
-    std::cout << "Hint " << std::fixed << time_hint.count()/10000000 << std::endl;
-    std::cout << "No hint " << std::fixed << time.count()/10000000 << std::endl;
-    // Hint 0.001779
-    // No hint 0.001859
+    auto end = clock();
+    std::cout << "No hint " << (double)(end - start) / CLOCKS_PER_SEC << std::endl;
+
+    start = clock();
+    for(uint64_t i = 0; i < 10000000; ++i){
+        it = myMap1.insert(it, {i, i});
+    }
+    end = clock();
+    std::cout << "Hint " << (double)(end - start) / CLOCKS_PER_SEC << std::endl;
+
+    // No hint 2.64896
+    // Hint 0.541984
     return 0;
 }
