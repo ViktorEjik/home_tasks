@@ -28,7 +28,7 @@ int main() {
     end = clock();
 
     std::cout << "No hint " << (double)(end - start) / CLOCKS_PER_SEC << std::endl;
-//    Hint 0.193043
-//    No hint 0.225971
+//    Hint 0.582761
+//    No hint 0.503638
     return 0;
 }
